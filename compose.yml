@@ -1,0 +1,17 @@
+version: '3'
+services:
+  tf:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./src:/try_gcp_with_terraform
+    tty: true
+
+  go-app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.Go
+    volumes:
+      - ./src:/go/src/try_gcp_with_terraform
+    tty: true
