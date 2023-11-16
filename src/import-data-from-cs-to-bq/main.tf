@@ -9,3 +9,9 @@ provider "google" {
   region = var.region
   zone = var.zone
 }
+
+locals {
+  project = "shushutona"
+  csv-bucket-name = "${local.project}-csv-bucket"
+  function-source-bucket-name = "${local.project}-function-source-bucket"
+}
