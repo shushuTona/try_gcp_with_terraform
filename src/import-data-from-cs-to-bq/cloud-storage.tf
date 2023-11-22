@@ -19,8 +19,14 @@ resource "google_storage_bucket" "function-source-bucket" {
   location = "ASIA"
 }
 
+data "archive_file" "function-src" {
+  type = "zip"
+  source_dir = "./file"
+  output_path = "./function-source.zip"
+}
+
 resource "google_storage_bucket_object" "function-source-file" {
-  name   = "function-source.zip"
+  name   = "function-source.${data.archive_file.function-src.output_md5}.zip"
   bucket = google_storage_bucket.function-source-bucket.name
-  source = "./file/function-source.zip"
+  source = data.archive_file.function-src.output_path
 }
