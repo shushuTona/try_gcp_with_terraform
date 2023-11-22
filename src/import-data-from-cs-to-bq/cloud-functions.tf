@@ -38,11 +38,18 @@ resource "google_project_iam_member" "artifactregistry_reader" {
   depends_on = [google_project_iam_member.event_receiving]
 }
 
+resource "google_project_iam_member" "bucket_reader" {
+  project    = data.google_project.project.project_id
+  role       = "roles/storage.objectViewer"
+  member     = "serviceAccount:${google_service_account.account.email}"
+}
+
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function
 resource "google_cloudfunctions2_function" "insert-csv-data-function" {
   depends_on = [
     google_project_iam_member.event_receiving,
     google_project_iam_member.artifactregistry_reader,
+    google_project_iam_member.bucket_reader,
   ]
 
   name = "insert-csv-data-function"
