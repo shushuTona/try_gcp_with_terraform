@@ -1,3 +1,5 @@
+# https://cloud.google.com/functions/docs/calling/storage?hl=ja
+
 data "google_storage_project_service_account" "default" {
 }
 
@@ -82,6 +84,7 @@ resource "google_cloudfunctions2_function" "insert-csv-data-function" {
     event_type            = "google.cloud.storage.object.v1.finalized"
     retry_policy          = "RETRY_POLICY_RETRY"
     service_account_email = google_service_account.account.email
+
     event_filters {
       attribute = "bucket"
       value = google_storage_bucket.csv-bucket.name
