@@ -3,9 +3,8 @@ package insertcsvdatafunction
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 
-	"cloud.google.com/go/storage"
+	"cloud.google.com/go/bigquery"
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/cloudevents/sdk-go/v2/event"
 )
@@ -49,27 +48,39 @@ func cloudEventFunction(ctx context.Context, e event.Event) error {
 	fmt.Printf("eventData.Name : %#v\n", eventData.Name)
 
 	bucketName := eventData.Bucket
-	fileName := eventData.Name
-
-	client, err := storage.NewClient(ctx)
-	if err != nil {
-		return fmt.Errorf("storage.NewClient: %w", err)
-	}
-	defer client.Close()
-
-	bucketHandle := client.Bucket(bucketName)
-	rc, err := bucketHandle.Object(fileName).NewReader(ctx)
-	if err != nil {
-		return err
-	}
-	defer rc.Close()
-
-	slurp, err := ioutil.ReadAll(rc)
+	objectKey := eventData.Name
+	projectID := "composed-facet-402402"
+	client, err := bigquery.NewClient(ctx, projectID)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(string(slurp))
+	gcsRef := bigquery.NewGCSReference(fmt.Sprintf("gs://%s/%s", bucketName, objectKey))
+	gcsRef.AllowJaggedRows = true
+	gcsRef.SkipLeadingRows = 1
+	gcsRef.Schema = bigquery.Schema{
+		{Name: "id", Type: bigquery.IntegerFieldType, Required: true},
+		{Name: "name", Type: bigquery.StringFieldType},
+	}
+
+	dataset := client.Dataset("test_dataset")
+	loader := dataset.Table("test_table").LoaderFrom(gcsRef)
+	loader.CreateDisposition = bigquery.CreateNever
+	job, err := loader.Run(ctx)
+	if err != nil {
+		return err
+	}
+
+	status, err := job.Wait(ctx)
+	if err != nil {
+		return err
+	}
+
+	if status.Done() {
+		if status.Err() != nil {
+			return err
+		}
+	}
 
 	return nil
 }

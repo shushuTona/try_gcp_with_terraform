@@ -44,12 +44,26 @@ resource "google_project_iam_member" "bucket_reader" {
   member     = "serviceAccount:${google_service_account.account.email}"
 }
 
+resource "google_project_iam_member" "bigquery_job_user" {
+  project    = data.google_project.project.project_id
+  role       = "roles/bigquery.jobUser"
+  member     = "serviceAccount:${google_service_account.account.email}"
+}
+
+resource "google_project_iam_member" "bigquery_data_editor" {
+  project    = data.google_project.project.project_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:${google_service_account.account.email}"
+}
+
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function
 resource "google_cloudfunctions2_function" "insert-csv-data-function" {
   depends_on = [
     google_project_iam_member.event_receiving,
     google_project_iam_member.artifactregistry_reader,
     google_project_iam_member.bucket_reader,
+    google_project_iam_member.bigquery_job_user,
+    google_project_iam_member.bigquery_data_editor,
   ]
 
   name = "insert-csv-data-function"
