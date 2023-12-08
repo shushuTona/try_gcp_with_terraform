@@ -1,6 +1,6 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/eventarc_trigger
 resource "google_eventarc_trigger" "event-trigger" {
-  name = "workflows-trriger-by-cs"
+  name     = "workflows-trriger-by-cs"
   location = "asia"
   # location = "asia-northeast1"
 

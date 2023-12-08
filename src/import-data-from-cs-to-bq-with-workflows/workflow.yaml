@@ -4,14 +4,14 @@ main:
     - log_event:
         call: sys.log
         args:
-          text: $${event}
+          text: ${event}
           severity: INFO
 
     - gather_data:
         assign:
-          - bucket: $${event.data.bucket}
-          - name: $${event.data.name}
-          - message: $${"Received event " + event.type + " - " + bucket + ", " + name}
+          - bucket: ${event.data.bucket}
+          - name: ${event.data.name}
+          - message: ${"Received event " + event.type + " - " + bucket + ", " + name}
 
     - return_data:
-        return: $${message}
+        return: ${message}

@@ -13,13 +13,13 @@ resource "google_project_iam_member" "workflowsinvoker" {
 }
 
 resource "google_project_iam_member" "eventReceiver" {
-  project    = data.google_project.project.project_id
-  role       = "roles/eventarc.eventReceiver"
-  member     = "serviceAccount:${google_service_account.account.email}"
+  project = data.google_project.project.project_id
+  role    = "roles/eventarc.eventReceiver"
+  member  = "serviceAccount:${google_service_account.account.email}"
 }
 
 resource "google_project_iam_member" "logWriter" {
-  project    = data.google_project.project.project_id
-  role       = "roles/logging.logWriter"
-  member     = "serviceAccount:${google_service_account.account.email}"
+  project = data.google_project.project.project_id
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.account.email}"
 }
