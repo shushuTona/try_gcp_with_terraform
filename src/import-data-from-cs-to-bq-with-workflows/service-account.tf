@@ -23,3 +23,21 @@ resource "google_project_iam_member" "logWriter" {
   role    = "roles/logging.logWriter"
   member  = "serviceAccount:${google_service_account.account.email}"
 }
+
+resource "google_project_iam_member" "bigqueryJobUser" {
+  project = data.google_project.project.project_id
+  role    = "roles/bigquery.jobUser"
+  member  = "serviceAccount:${google_service_account.account.email}"
+}
+
+resource "google_project_iam_member" "bigqueryDataEditor" {
+  project = data.google_project.project.project_id
+  role    = "roles/bigquery.dataEditor"
+  member  = "serviceAccount:${google_service_account.account.email}"
+}
+
+resource "google_project_iam_member" "bucketReader" {
+  project    = data.google_project.project.project_id
+  role       = "roles/storage.objectViewer"
+  member     = "serviceAccount:${google_service_account.account.email}"
+}

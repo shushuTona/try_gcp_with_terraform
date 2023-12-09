@@ -5,5 +5,6 @@ resource "google_workflows_workflow" "test-workflow" {
   description     = "workflow for importing csv file data to bq"
   service_account = google_service_account.account.id
 
-  source_contents = file("${path.module}/workflow.yaml")
+  # https://cloud.google.com/workflows/docs/reference/syntax
+  source_contents = templatefile("${path.module}/workflow.tftpl", { schema = file("${path.module}/schema.json"), projectId = var.project })
 }

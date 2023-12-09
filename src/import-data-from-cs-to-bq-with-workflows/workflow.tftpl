@@ -1,0 +1,38 @@
+main:
+  params:
+    - event
+  steps:
+    - log_event:
+        call: sys.log
+        args:
+          text: $${event}
+          severity: INFO
+
+    - gather_data:
+        assign:
+          - projectId: $${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+          - bucket: $${event.data.bucket}
+          - name: $${event.data.name}
+          - message: $${"Received event " + event.type + " - " + bucket + ", " + name}
+          - schema: ${schema}
+
+    - load_csv:
+        call: googleapis.bigquery.v2.jobs.insert
+        args:
+            projectId: ${projectId}
+            body:
+                configuration:
+                    load:
+                        sourceUris: $${"gs://" + bucket + "/" + name}
+                        destinationTable:
+                            projectId: ${projectId}
+                            datasetId: import_data_from_cs_to_bq_with_workflows
+                            tableId: test_tmp_table
+                        schema:
+                            fields: $${schema}
+                        createDisposition: CREATE_IF_NEEDED
+                        writeDisposition: WRITE_TRUNCATE
+                        skipLeadingRows: 1
+
+    - return_data:
+        return: $${schema}

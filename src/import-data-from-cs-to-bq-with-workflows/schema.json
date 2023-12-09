@@ -1,22 +1,22 @@
 [
   {
-      "name": "id",
-      "type": "INTEGER",
-      "mode": "REQUIRED"
+    "name": "id",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
   },
   {
-      "name": "name",
-      "type": "STRING",
-      "mode": "NULLABLE"
+    "name": "name",
+    "type": "STRING",
+    "mode": "NULLABLE"
   },
   {
-      "name": "age",
-      "type": "INTEGER",
-      "mode": "NULLABLE"
+    "name": "age",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
   },
   {
-      "name": "created_at",
-      "type": "TIMESTAMP",
-      "mode": "NULLABLE"
+    "name": "created_at",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
   }
 ]
