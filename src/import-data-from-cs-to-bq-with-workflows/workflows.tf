@@ -7,5 +7,10 @@ resource "google_workflows_workflow" "test-workflow" {
 
   # https://cloud.google.com/workflows/docs/reference/syntax
   # https://cloud.google.com/workflows/docs/reference/googleapis/bigquery/v2/jobs/insert
-  source_contents = templatefile("${path.module}/workflow.tftpl", { schema = file("${path.module}/schema.json"), projectId = var.project })
+  # https://cloud.google.com/workflows/docs/reference/googleapis/bigquery/v2/jobs/query
+  source_contents = templatefile("${path.module}/workflow.tftpl", {
+    projectId = var.project,
+    schema = file("${path.module}/schema.json"),
+    query = file("${path.module}/query/query.sql")
+  })
 }

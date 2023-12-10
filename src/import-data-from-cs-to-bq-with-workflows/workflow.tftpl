@@ -15,6 +15,19 @@ main:
           - name: $${event.data.name}
           - message: $${"Received event " + event.type + " - " + bucket + ", " + name}
           - schema: ${schema}
+          - query: "${query}"
+
+    - log_schema:
+        call: sys.log
+        args:
+          text: $${schema}
+          severity: INFO
+
+    - log_query:
+        call: sys.log
+        args:
+          text: $${query}
+          severity: INFO
 
     - load_csv:
         call: googleapis.bigquery.v2.jobs.insert
@@ -34,5 +47,10 @@ main:
                         writeDisposition: WRITE_TRUNCATE
                         skipLeadingRows: 1
 
-    - return_data:
-        return: $${schema}
+    - run_query:
+        call: googleapis.bigquery.v2.jobs.query
+        args:
+            projectId: ${projectId}
+            body:
+                query: $${query}
+                useLegacySql: false
