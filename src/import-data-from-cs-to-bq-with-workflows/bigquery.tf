@@ -10,6 +10,7 @@ resource "google_bigquery_table" "test-table" {
   table_id   = "test_table"
 
   time_partitioning {
+    field = "created_at"
     type = "DAY"
   }
 
