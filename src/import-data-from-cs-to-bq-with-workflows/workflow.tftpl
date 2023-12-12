@@ -30,27 +30,49 @@ main:
           severity: INFO
 
     - load_csv:
-        call: googleapis.bigquery.v2.jobs.insert
-        args:
-            projectId: ${projectId}
-            body:
-                configuration:
-                    load:
-                        sourceUris: $${"gs://" + bucket + "/" + name}
-                        destinationTable:
-                            projectId: ${projectId}
-                            datasetId: import_data_from_cs_to_bq_with_workflows
-                            tableId: test_tmp_table
-                        schema:
-                            fields: $${schema}
-                        createDisposition: CREATE_IF_NEEDED
-                        writeDisposition: WRITE_TRUNCATE
-                        skipLeadingRows: 1
+        try:
+          call: googleapis.bigquery.v2.jobs.insert
+          args:
+              projectId: ${projectId}
+              body:
+                  configuration:
+                      load:
+                          sourceUris: $${"gs://" + bucket + "/" + name}
+                          destinationTable:
+                              projectId: ${projectId}
+                              datasetId: import_data_from_cs_to_bq_with_workflows
+                              tableId: test_tmp_table
+                          schema:
+                              fields: $${schema}
+                          createDisposition: CREATE_IF_NEEDED
+                          writeDisposition: WRITE_TRUNCATE
+                          skipLeadingRows: 1
+        except:
+            as: e
+            steps:
+              - load_csv_exception:
+                    call: sys.log
+                    args:
+                      text: $${e}
+                      severity: ERROR
+              - load_csv_raise_error:
+                  raise: $${e.message}
 
     - run_query:
-        call: googleapis.bigquery.v2.jobs.query
-        args:
-            projectId: ${projectId}
-            body:
-                query: $${query}
-                useLegacySql: false
+        try:
+          call: googleapis.bigquery.v2.jobs.query
+          args:
+              projectId: ${projectId}
+              body:
+                  query: $${query}
+                  useLegacySql: false
+        except:
+            as: e
+            steps:
+              - run_query_exception:
+                    call: sys.log
+                    args:
+                      text: $${e}
+                      severity: ERROR
+              - run_query_raise_error:
+                  raise: $${e.message}
