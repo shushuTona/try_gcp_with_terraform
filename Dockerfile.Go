@@ -1,4 +1,4 @@
-FROM golang:1.21
+FROM golang:1.23.6
 
 RUN apt update -y && apt install zip -y
 

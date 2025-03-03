@@ -1,7 +1,7 @@
 // https://stackoverflow.com/questions/67391798/golang-cloud-function-build-failed-the-module-path-in-the-functions-go-mod-mus
 module try_gcp_with_terraform.com/insertcsvdatafunction
 
-go 1.21.4
+go 1.23.6
 
 require (
 	cloud.google.com/go/bigquery v1.56.0
